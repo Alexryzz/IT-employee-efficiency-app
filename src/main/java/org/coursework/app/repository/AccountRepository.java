@@ -4,7 +4,10 @@ import org.coursework.app.entity.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface AccountRepository extends JpaRepository<Account,Long> {
+import java.util.Optional;
 
+@Repository
+public interface AccountRepository extends JpaRepository<Account, Long> {
+    Optional<Account> findByEmail(String email);
+    boolean existsByEmail(String email);
 }

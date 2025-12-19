@@ -26,5 +26,6 @@ public class Account {
     private Role role;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Task> tasks;
-
+    @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
+    private Stats stats;
 }

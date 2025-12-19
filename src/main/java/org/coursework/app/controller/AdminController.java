@@ -3,6 +3,7 @@ package org.coursework.app.controller;
 import lombok.RequiredArgsConstructor;
 import org.coursework.app.dto.TaskRequest;
 import org.coursework.app.entity.Task;
+import org.coursework.app.service.StatsService;
 import org.coursework.app.service.TaskService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/admin")
 public class AdminController {
     private final TaskService taskService;
+    private final StatsService statsService;
 
     @PostMapping("/create-task")
     public ResponseEntity<?> createTask(@RequestBody TaskRequest taskRequest){
@@ -30,4 +32,13 @@ public class AdminController {
         return ResponseEntity.ok("Задача удалена успешно!");
     }
 
+    @GetMapping("/worker-stats/{id}")
+    public ResponseEntity<?> getWorkerStats(@PathVariable Long id){
+        try{
+            return ResponseEntity.ok(statsService.getStatsByAccountId(id));
+        }
+        catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
