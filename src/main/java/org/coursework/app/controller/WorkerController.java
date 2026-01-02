@@ -4,6 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.coursework.app.service.AccountService;
 import org.coursework.app.service.TaskService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -16,9 +19,9 @@ public class WorkerController {
     private final TaskService taskService;
 
     @PatchMapping("/get-task")
-    public ResponseEntity<?> getTask(@RequestParam String title, Principal principal){
+    public ResponseEntity<?> getTask(@AuthenticationPrincipal UserDetails principal , @RequestParam String title){
         try {
-            taskService.getTask(title, principal.getName());
+            taskService.getTask(title, principal.getUsername());
             return ResponseEntity.ok("Задача: " + title + "\nПерешла к выполнению" );
         }
         catch (Exception e){
@@ -35,5 +38,11 @@ public class WorkerController {
         catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test(@AuthenticationPrincipal UserDetails principal){
+        System.out.println(SecurityContextHolder.getContext());
+        return ResponseEntity.ok(principal.getUsername());
     }
 }

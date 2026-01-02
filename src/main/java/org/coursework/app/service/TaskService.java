@@ -8,7 +8,6 @@ import org.coursework.app.repository.AccountRepository;
 import org.coursework.app.repository.TaskRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
 

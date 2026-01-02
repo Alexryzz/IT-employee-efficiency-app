@@ -6,4 +6,4 @@ CREATE TABLE account (
 );
 
 ALTER TABLE account ADD CONSTRAINT role_check
-    CHECK (role IN ('WORKER', 'ADMIN'));
+    CHECK (role IN ('ROLE_WORKER', 'ROLE_ADMIN'));

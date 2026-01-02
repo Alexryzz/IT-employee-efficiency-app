@@ -1,5 +1,5 @@
 package org.coursework.app.enums;
 
 public enum Role {
-    WORKER, ADMIN
+    ROLE_WORKER, ROLE_ADMIN
 }

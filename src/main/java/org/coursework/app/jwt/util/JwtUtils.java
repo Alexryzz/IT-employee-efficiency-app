@@ -1,12 +1,14 @@
 package org.coursework.app.jwt.util;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.coursework.app.entity.Account;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
@@ -45,35 +47,17 @@ public class JwtUtils {
 
     public String getEmailFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(getSigningKey())
+                .verifyWith((SecretKey) getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload()
                 .getSubject();
     }
 
-    public Long getIdFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .get("id", Long.class);
-    }
-
-    public String getRoleFromToken(String token) {
-        return Jwts.parser()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .get("role", String.class);
-    }
-
     public boolean validateToken(String token) {
         try {
             Jwts.parser()
-                    .setSigningKey(getSigningKey())
+                    .verifyWith((SecretKey) getSigningKey())
                     .build()
                     .parseSignedClaims(token);
             return true;
@@ -82,8 +66,24 @@ public class JwtUtils {
         }
     }
 
+    public boolean validateExpiration(String token) {
+        return Jwts.parser()
+                .verifyWith((SecretKey) getSigningKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getExpiration()
+                .before(new Date(System.currentTimeMillis() + jwtExpirationMs));
+    }
+
+    public Jws<Claims> getClaimsFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith((SecretKey) getSigningKey())
+                .build()
+                .parseSignedClaims(token);
+    }
+
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
+        return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
 }
