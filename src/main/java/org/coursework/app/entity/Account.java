@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.coursework.app.enums.Role;
+import org.coursework.app.enums.WorkerGrade;
 
 import java.util.List;
 
@@ -24,8 +25,13 @@ public class Account {
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private Role role;
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Task> tasks;
+    @OneToMany(mappedBy = "worker", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Task> workTasks;
     @OneToOne(mappedBy = "account", cascade = CascadeType.ALL)
     private Stats stats;
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Task> createdTasks;
+    @Column(name = "grade")
+    @Enumerated(EnumType.STRING)
+    private WorkerGrade grade;
 }

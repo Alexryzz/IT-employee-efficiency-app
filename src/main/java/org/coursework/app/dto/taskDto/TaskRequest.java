@@ -1,5 +1,6 @@
-package org.coursework.app.dto;
+package org.coursework.app.dto.taskDto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,7 @@ import org.coursework.app.enums.taskEnums.TaskImportance;
 import org.coursework.app.enums.taskEnums.TaskType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -18,5 +20,6 @@ public class TaskRequest {
     private TaskType taskType;
     private TaskComplexity taskComplexity;
     private TaskImportance taskImportance;
-    private LocalDate deadline;
+    @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "dd.MM.yyyy HH:mm")
+    private LocalDateTime deadline;
 }

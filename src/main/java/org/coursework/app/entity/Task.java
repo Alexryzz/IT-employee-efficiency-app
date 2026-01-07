@@ -10,6 +10,7 @@ import org.coursework.app.enums.taskEnums.TaskStatus;
 import org.coursework.app.enums.taskEnums.TaskType;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -27,24 +28,29 @@ public class Task {
     @Column(name = "task_type")
     @Enumerated(EnumType.STRING)
     private TaskType taskType;
-    @Column(name = "complexity")
+    @Column(name = "task_complexity")
     @Enumerated(EnumType.STRING)
     private TaskComplexity taskComplexity;
-    @Column(name = "importance")
+    @Column(name = "task_importance")
     @Enumerated(EnumType.STRING)
     private TaskImportance taskImportance;
     @Column(name = "task_get_date")
-    private LocalDate taskGetDate;
+    private LocalDateTime taskGetDate;
     @Column(name = "deadline")
-    private LocalDate deadline;
+    private LocalDateTime deadline;
     @Column(name = "task_done_date")
-    private LocalDate taskDoneDate;
+    private LocalDateTime taskDoneDate;
     @Column(name = "comment")
     private String comment;
     @Column(name = "task_status")
     @Enumerated(EnumType.STRING)
     private TaskStatus taskStatus;
     @ManyToOne()
-    @JoinColumn(name = "account_id")
-    private Account account;
+    @JoinColumn(name = "worker_id")
+    private Account worker;
+    @Column(name = "task_created_date")
+    private LocalDateTime taskCreatedDate;
+    @ManyToOne()
+    @JoinColumn(name = "admin_id")
+    private Account admin;
 }

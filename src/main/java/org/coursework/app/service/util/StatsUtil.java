@@ -1,10 +1,12 @@
 package org.coursework.app.service.util;
 
 import org.coursework.app.entity.Task;
+import org.coursework.app.enums.taskEnums.TaskStatus;
 import org.coursework.app.enums.taskEnums.TaskType;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,13 +50,16 @@ public class StatsUtil {
         return map;
     }
 
-    public static Short considerTimeEffectivity(Task task){
+    public static Short considerTimeEffectivity(Short oldEffective, int countTasks ,Task task){
         short timeEffectivity;
-        LocalDateTime dateTime1 = task.getTaskGetDate().atStartOfDay();
-        LocalDateTime dateTime2 = task.getDeadline().atStartOfDay();
-        LocalDateTime dateTimeDone = task.getTaskDoneDate().atStartOfDay();
+        LocalDateTime dateTime1 = task.getTaskGetDate();
+        LocalDateTime dateTime2 = task.getDeadline();
+        LocalDateTime dateTimeDone = task.getTaskDoneDate();
 
         long secondsForCompletion = ChronoUnit.SECONDS.between(dateTime1, dateTimeDone);
+        if (secondsForCompletion == 0){
+            secondsForCompletion = 1;
+        }
         long startSecondsForEffectivity = ChronoUnit.SECONDS.between(dateTime1, dateTime2)/2;
         long endSecondsForEffectivity = ChronoUnit.SECONDS.between(dateTime2, dateTimeDone)*2;
 
@@ -70,6 +75,8 @@ public class StatsUtil {
 
         long onePercentSec = (endSecondsForEffectivity-startSecondsForEffectivity)/100;
         timeEffectivity = (short) Math.round((1.0 - (double) secondsForCompletion /onePercentSec) * 100);
-        return timeEffectivity;
+
+        return (short) ((oldEffective + timeEffectivity) / countTasks);
+
     }
 }

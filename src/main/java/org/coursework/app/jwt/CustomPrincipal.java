@@ -32,6 +32,6 @@ public class CustomPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return null;
+        return email;
     }
 }
