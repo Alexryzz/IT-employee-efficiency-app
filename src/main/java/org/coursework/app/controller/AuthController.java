@@ -1,4 +1,5 @@
 package org.coursework.app.controller;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.coursework.app.dto.LoginRequest;
@@ -24,43 +25,33 @@ public class AuthController {
     private final JwtUtils jwtUtils;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register (@RequestBody RegisterRequest registerRequest) {
-        try{
-            accountService.registerAccount(registerRequest);
-            return ResponseEntity.ok().build();
-        }
-        catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+        accountService.registerAccount(registerRequest);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/registerAdmin")
-    public ResponseEntity<?> registerAdmin (@RequestBody RegisterAdminRequest registerAdminRequest) {
-        try{
-            accountService.registerAdmin(registerAdminRequest);
-            return ResponseEntity.ok().build();
-        }
-        catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> registerAdmin(@RequestBody RegisterAdminRequest registerAdminRequest) {
+        accountService.registerAdmin(registerAdminRequest);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid LoginRequest request) {
-            Account account = accountService.validateLoginRequest(request);
+        Account account = accountService.validateLoginRequest(request);
 
-            String accessToken = jwtUtils.generateAccessToken(account);
-            String refreshToken = jwtUtils.generateRefreshToken(account);
+        String accessToken = jwtUtils.generateAccessToken(account);
+        String refreshToken = jwtUtils.generateRefreshToken(account);
 
-            JwtResponse response = JwtResponse.builder()
-                    .accessToken(accessToken)
-                    .refreshToken(refreshToken)
-                    .id(account.getId())
-                    .email(account.getEmail())
-                    .role(account.getRole())
-                    .build();
+        JwtResponse response = JwtResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .id(account.getId())
+                .email(account.getEmail())
+                .role(account.getRole())
+                .build();
 
-            return ResponseEntity.ok(response);
+        return ResponseEntity.ok(response);
 
     }
 

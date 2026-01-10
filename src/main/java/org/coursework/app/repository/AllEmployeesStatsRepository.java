@@ -12,5 +12,9 @@ public interface AllEmployeesStatsRepository extends JpaRepository<AllEmployeesS
     @Modifying
     @Transactional
     @Query("UPDATE AllEmployeesStats a SET a.count = a.count + 1 WHERE a.workerGrade = :grade")
-    void increaseCountByGrade(@Param("grade") WorkerGrade workerGrade);
+    void incrementCount(@Param("grade") WorkerGrade workerGrade);
+    @Modifying
+    @Transactional
+    @Query("UPDATE AllEmployeesStats a SET a.count = a.count - 1 WHERE a.workerGrade = :grade")
+    void decrementCount(@Param("grade") WorkerGrade grade);
 }

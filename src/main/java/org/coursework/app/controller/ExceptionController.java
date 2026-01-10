@@ -1,5 +1,6 @@
 package org.coursework.app.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
 @RestControllerAdvice
+@Slf4j
 public class ExceptionController {
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -20,6 +22,7 @@ public class ExceptionController {
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<?> handleException(UsernameNotFoundException e) {
+        log.warn("Account not found");
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 

@@ -2,6 +2,7 @@ package org.coursework.app.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.coursework.app.dto.AccountDto.SimpleAccountDto;
 import org.coursework.app.dto.taskDto.TaskCreatedResponse;
 import org.coursework.app.dto.taskDto.TaskRequest;
@@ -20,11 +21,12 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class TaskService {
     private final TaskRepository taskRepository;
     private final AccountRepository accountRepository;
 
-    public Task taskCreate(TaskRequest taskRequest, Long adminId){
+    public Task taskCreate(TaskRequest taskRequest, Long adminId) {
         validateTaskMatch(taskRequest);
 
         Account admin = accountRepository.findById(adminId).orElseThrow(() ->
@@ -40,11 +42,11 @@ public class TaskService {
         task.setDeadline(taskRequest.getDeadline());
         task.setTaskStatus(TaskStatus.TO_DO);
         task.setAdmin(admin);
-
+        log.info("saving task");
         return taskRepository.save(task);
     }
 
-    public TaskCreatedResponse convertToTaskCreatedResponse(Task task){
+    public TaskCreatedResponse convertToTaskCreatedResponse(Task task) {
         TaskCreatedResponse response = new TaskCreatedResponse();
         response.setTitle(task.getTitle());
         response.setDescription(task.getDescription());
@@ -59,50 +61,55 @@ public class TaskService {
                 task.getAdmin().getEmail(),
                 task.getAdmin().getRole()
         ));
-
+        log.info("creating task response");
         return response;
     }
 
-    public void deleteTask(String title){
+    public void deleteTask(String title) {
         Task task = taskRepository.findByTitle(title)
-                        .orElseThrow(() -> new IllegalArgumentException(
-                                "Задания с таким заголовком не существует"));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Задания с таким заголовком не существует"));
+        log.info("deleting task");
         taskRepository.delete(task);
     }
 
-    public void getTask(String title, String workerEmail){
+    public void getTask(String title, String workerEmail) {
         Account worker = accountRepository.findByEmail(workerEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Аккаунт не найден"));
-        if(worker.getGrade()!=null){
+        if (worker.getGrade() != null) {
             Task task = taskRepository.findByTitle(title)
                     .orElseThrow(() -> new IllegalArgumentException("Задания с таким заголовком не существует"));
 
             task.setWorker(worker);
             task.setTaskGetDate(LocalDateTime.now());
             task.setTaskStatus(TaskStatus.IN_PROGRESS);
+            log.info("getting task");
             taskRepository.save(task);
-        }
-        else {
+        } else {
+            log.warn("unable to get task");
             throw new BadCredentialsException("У вас не достаточно полномочий.");
         }
     }
 
-    public void taskCompleted(String title){
+    public void taskCompleted(String title) {
 
         Task task = taskRepository.findByTitle(title)
                 .orElseThrow(() -> new IllegalArgumentException("Задания с таким заголовком не существует"));
-        if(task.getTaskStatus().equals(TaskStatus.IN_PROGRESS)){
+        if (task.getTaskStatus().equals(TaskStatus.IN_PROGRESS)) {
             task.setTaskStatus(TaskStatus.COMPLETED);
             task.setTaskDoneDate(LocalDateTime.now());
-
+            log.info("completing task");
             taskRepository.save(task);
+        } else {
+            log.warn("task was not under development");
+            throw new IllegalArgumentException("Задание не было взято на разработку");
         }
-        else throw new IllegalArgumentException("Задание не было взято на разработку");
     }
 
-    private void validateTaskMatch(TaskRequest taskRequest){
-        if(taskRepository.existsByTitle(taskRequest.getTitle())){
-           throw new IllegalArgumentException("Задача с таким заголовком уже существует");
+    private void validateTaskMatch(TaskRequest taskRequest) {
+        if (taskRepository.existsByTitle(taskRequest.getTitle())) {
+            log.warn("task with this title already exists");
+            throw new IllegalArgumentException("Задача с таким заголовком уже существует");
         }
     }
 

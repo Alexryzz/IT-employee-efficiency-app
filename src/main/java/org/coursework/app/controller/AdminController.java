@@ -36,21 +36,17 @@ public class AdminController {
         return ResponseEntity.ok("Задача удалена успешно!");
     }
 
-//    @GetMapping("/worker-stats/{id}")
-//    public ResponseEntity<?> getWorkerStats(@PathVariable Long id){
-//        try{
-//            return ResponseEntity.ok(statsService.getStatsByAccountId(id));
-//        }
-//        catch(Exception e){
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+    @PutMapping("/worker-grade/{id}")
+    public ResponseEntity<?> setWorkerGrade(@PathVariable Long id,
+                                               @RequestBody UpdateGradeRequest workerGrade){
+        accountService.setWorkerGrade(id, workerGrade);
+        return ResponseEntity.ok("Уровень работника установлен.");
+    }
 
     @PatchMapping("/worker-grade/{id}")
     public ResponseEntity<?> updateWorkerGrade(@PathVariable Long id,
                                                @RequestBody UpdateGradeRequest workerGrade){
-        accountService.setWorkerGrade(id, workerGrade);
-        accountService.createStats(id);
-        return ResponseEntity.ok("Уровень работника изменен.");
+        accountService.updateWorkerGrade(id, workerGrade);
+        return ResponseEntity.ok("Уровень работника обновлен.");
     }
 }

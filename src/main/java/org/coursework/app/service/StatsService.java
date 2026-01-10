@@ -2,6 +2,7 @@ package org.coursework.app.service;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.coursework.app.entity.Account;
 import org.coursework.app.entity.Stats;
 import org.coursework.app.entity.Task;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StatsService {
     private final AccountRepository accountRepository;
     private final StatsRepository statsRepository;
@@ -29,6 +31,7 @@ public class StatsService {
         List<Task> tasks = getCompletedTasksByAccount(account);
         stats.setTaskTypeRatio(StatsUtil.considerTypeEffectivity(tasks));
         stats.setTimeEffectivity(StatsUtil.considerTimeEffectivity(stats.getTimeEffectivity(), tasks.size() ,tasks.getLast()));
+        log.info("updating stats");
         return statsRepository.save(stats);
     }
 
@@ -40,6 +43,7 @@ public class StatsService {
                 completedTasks.add(task);
             }
         }
+        log.info("getting completed tasks");
         return completedTasks;
     }
 
